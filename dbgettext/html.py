@@ -2,6 +2,8 @@ from django.conf import settings
 from registry import registry
 import re
 
+SENTENCE_RE = getattr(settings, 'DBGETTEXT_SENTENCE_RE', re.compile(r'^(.*?\S[\!\?\.])(\s+)(\S+.*)$', re.DOTALL))
+
 class Token(object):
     """ A categorised chunk of HTML content """
 
@@ -30,6 +32,20 @@ class Tag(Token):
     def is_translatable(self):
         return self.name.lower() in Tag.gettext_inline_tags
 
+def flatten_token_list(token_list):
+    """ Recursively flattens list of tokens.
+
+    Allows scanner callbacks to return lists of tokens.
+    """
+
+    flat_list = []
+    for token in token_list:
+        if isinstance(token, list):
+            flat_list += flatten_token_list(token)
+        else:
+            flat_list.append(token)
+    return flat_list
+
 
 def html_gettext(obj, attribute, export=False):
     """ Extracts translatable strings from HTML content
@@ -39,6 +55,7 @@ def html_gettext(obj, attribute, export=False):
     If export is True, returns a list of translatable strings only.
 
     """
+
 
     options = registry._registry[type(obj)]
     content = getattr(obj, attribute)
@@ -65,7 +82,24 @@ def html_gettext(obj, attribute, export=False):
         return Tag(*(('empty', token,) + scanner.match.groups()[:2]))
 
     def text(scanner, token):
-        return Token('text', token)
+        if getattr(settings, 'DBGETTEXT_SPLIT_SENTENCES', True):
+            text = token
+            tokens = []
+            while True:
+                m = SENTENCE_RE.match(text)
+                if m:
+                    tokens.append(Token('text',m.groups()[0]))
+                    tokens.append(Token('whitespace',m.groups()[1]))
+                    text = m.groups()[2]
+                    if text:
+                        tokens.append(Token('sentence_separator',''))
+                else:
+                    break
+            if text:
+                tokens.append(Token('text', text))
+            return tokens
+        else:
+            return Token('text', token)
 
     def whitespace(scanner, token):
         return Token('whitespace', token)
@@ -101,6 +135,7 @@ def html_gettext(obj, attribute, export=False):
 
     scanner = re.Scanner(lexicon, re.DOTALL)
     tokens, remainder = scanner.scan(content)
+    tokens = flatten_token_list(tokens)
 
     gettext = []
     output = []
