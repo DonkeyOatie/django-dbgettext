@@ -2,3 +2,7 @@ syntax: glob
 *.pyc
 *~
 MANIFEST
+# Sphinx:
+_build
+_static
+_templates
