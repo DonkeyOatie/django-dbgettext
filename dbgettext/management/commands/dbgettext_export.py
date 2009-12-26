@@ -19,6 +19,7 @@ def recursive_getattr(obj, attr, default=None, separator='__'):
 
 
 def get_field_or_callable_content(obj, attr_name):
+    """ Returns value of obj.attr_name() or obj.attr_name """
     try:
         attr = getattr(obj, attr_name)
     except AttributeError:
@@ -30,7 +31,14 @@ def get_field_or_callable_content(obj, attr_name):
         return attr
 
 
-def build_queryset(model, options, queryset=None, trail=[]):
+def build_queryset(model, queryset=None, trail=[]):
+    """ Recursively creates queryset for model using options """
+
+    try:
+        options = registry._registry[model]
+    except:
+        raise Exception, "%s is not registered with dbgettext" % model
+
     if queryset is None:
         queryset = model.objects.all()
 
@@ -40,29 +48,30 @@ def build_queryset(model, options, queryset=None, trail=[]):
     queryset = queryset.filter(**recursive_criteria)
 
     if options.parent:
-        parent_model = getattr(model,options.parent).field.related.parent_model
-        try:
-            parent_options = registry._registry[parent_model]
-        except:
-            raise Exception, "%s.%s is not registered with dbgettext" \
-                % (model, options.parent)
-        queryset = build_queryset(parent_model, parent_options, 
-                                  queryset, trail+[options.parent])
+        parent_model = \
+            getattr(model,options.parent).field.related.parent_model
+        queryset = build_queryset(parent_model, queryset, 
+                                  trail+[options.parent])
 
     return queryset
 
 
 def build_path(obj):
+    """ Recursively constructs path for object using options """
+
     model = type(obj)
     options = registry._registry[model]
     if options.parent:
         path = build_path(getattr(obj, options.parent))
     else:
-        path = os.path.join(model._meta.app_label, model._meta.module_name)
+        path = os.path.join(model._meta.app_label,model._meta.module_name)
     return os.path.join(path, options.get_path_identifier(obj))
 
 
 class Command(NoArgsCommand):
+    """ dbgettext_export management command """
+
+    # overridable path settings (default: project_root/locale/dbgettext/...)
     path = getattr(settings, 'DBGETTEXT_PATH', 'locale/')
     root = getattr(settings, 'DBGETTEXT_ROOT', 'dbgettext')
 
@@ -81,7 +90,6 @@ class Command(NoArgsCommand):
         """ Export translatable strings from models into static files """
 
         def write(file, string):
-            print file.name, ':', string
             string = string.replace('"','\\"') # prevent """"
             string = string.encode('utf8')
             file.write(u'gettext("""%s""")\n' % string)
@@ -94,13 +102,13 @@ class Command(NoArgsCommand):
 
         # for each registered model:
         for model, options in registry._registry.items():
-            for obj in build_queryset(model, options):
+            for obj in build_queryset(model):
                 path = os.path.join(root, build_path(obj))
+
                 if not os.path.exists(path): 
                     os.makedirs(path)
-                # for each translatable attribute:
+
                 for attr_name in options.attributes:
-                    # write contents to <attr_name>.py
                     attr = get_field_or_callable_content(obj, attr_name)
                     if attr:
                         f = open(os.path.join(path, '%s.py' % attr_name), 'w')
