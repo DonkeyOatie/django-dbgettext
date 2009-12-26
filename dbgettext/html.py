@@ -28,7 +28,7 @@ class Tag(Token):
         self.attributes = attributes
 
     def is_translatable(self):
-        return self.name in Tag.gettext_inline_tags
+        return self.name.lower() in Tag.gettext_inline_tags
 
 
 def html_gettext(obj, attribute, export=False):
