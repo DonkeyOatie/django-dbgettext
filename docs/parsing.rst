@@ -79,6 +79,19 @@ The ``custom_lexicon_rules`` :ref:`option <options>` allow the HTML parsing algo
 
     registry.register(Text, TextOptions)
 
+Subclassing Token
+-----------------
+
+``get_key``
+    provide this method if your entire ``Token`` should be be displayed as a placeholder -- e.g. ``%(get_key_output_here)s``
+
+``get_raw``
+    provide this method if your ``Token`` requires inner translation -- it should return ``self.raw`` with any inner translatable parts already gettexted
+
+``get_gettext``
+    this method should return a list of any translatable strings within your ``Token`` (again, only required for inner translation)
+
+
 .. _custom_parsing:
     
 Other Parsing?
