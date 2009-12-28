@@ -55,7 +55,6 @@ def parsed_gettext(obj, attribute, export=False):
     If export is True, returns a list of translatable strings only.
 
     """
-    print "parsed_gettext", obj, attribute, export
 
     options = registry._registry[type(obj)]
     content = getattr(obj, attribute)
