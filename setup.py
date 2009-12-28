@@ -9,5 +9,5 @@ setup(name='django-dbgettext',
       author_email='simon@simonmeers.com',
       url='http://bitbucket.org/drmeers/django-dbgettext/wiki',
       packages=['dbgettext', 'dbgettext.management', 
-                'dbgettext.management.commands'],
+                'dbgettext.management.commands', 'dbgettext.lexicons'],
      )
