@@ -90,7 +90,6 @@ class Command(NoArgsCommand):
         """ Export translatable strings from models into static files """
 
         def write(file, string):
-            print "write", file, string
             string = string.replace('"','\\"') # prevent """"
             string = string.encode('utf8')
             file.write(u'gettext("""%s""")\n' % string)
