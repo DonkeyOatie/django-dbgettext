@@ -20,5 +20,6 @@ Contents:
    registration
    dbgettext_export
    settings
-
+   parsing
+   nesting
 

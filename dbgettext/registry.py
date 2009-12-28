@@ -6,9 +6,10 @@ class Options(object):
 
     - attributes: 
         tuple of names of fields/callables to be translated
-    - html_attributes: 
-        tuple of names of fields/callables with HTML content which should have 
-        translatable content extracted (should not be listed in attributes)
+    - parsed_attributes: 
+        dictionary of names of fields/callables with HTML content which should 
+        have translatable content extracted (should not be listed in 
+        attributes), with their associated lexicons
     - translate_if:
         dictionary used to filter() queryset 
     - get_path_identifier:
@@ -21,14 +22,11 @@ class Options(object):
     - custom_lexicon_rules
         list of extra custom rules ((regexp, function) tuples) to be applied
         when parsing HTML -- see html.py
-    - custom_lexicon:
-        complete list of rules ((regexp, function) tuples) for parsing HTML 
-         -- see html.py
 
     """
 
     attributes = ()
-    html_attributes = ()
+    parsed_attributes = {}
     translate_if = {}
     parent = None
     

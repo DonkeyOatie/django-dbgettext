@@ -8,11 +8,12 @@ Models can be registered for django-dbgettext in a similar fashion to registerin
 Simply create a ``gettext.py`` file within your application root directory, import the dbgettext ``registry`` object, and register your Models together with their customised ``dbgettext.models.Options``. For example::
 
     from dbgettext.registry import registry, Options
+    from dbgettext.lexicons import html    
     from myapp.models import MyModel
 
     class MyModelOptions(Options):
         attributes = ('title',)
-	html_attributes = ('body',)
+	parsed_attributes = {'body': html.lexicon}
 	
     registry.register(MyModel, MyModelOptions)
 
@@ -27,9 +28,12 @@ That's it. Your ``gettext.py`` files will be automatically imported by django-db
     
 - ``attributes``: 
     tuple of names of fields/callables to be translated
-- ``html_attributes``: 
-    tuple of names of fields/callables with HTML content which should have 
-    translatable content extracted (should not be listed in ``attributes``)
+- ``parsed_attributes``: 
+    dictionary of names of fields/callables with HTML content which should have 
+    translatable content extracted (should not be listed in ``attributes``). 
+    Values are callables which take an ``Options`` argument and return a 
+    lexicon suitable for ``re.Scanner`` -- see ``dbgettext.lexicons.html`` 
+    for an example.
 - ``translate_if``:
     dictionary used to ``filter()`` queryset 
 - ``get_path_identifier``:
@@ -41,7 +45,4 @@ That's it. Your ``gettext.py`` files will be automatically imported by django-db
         - queryset (object only translated if parent is)
 - ``custom_lexicon_rules``
     list of extra custom rules ((regexp, function) tuples) to be applied when 
-    parsing HTML -- see html.py
-- ``custom_lexicon``:
-    complete list of rules ((regexp, function) tuples) for parsing HTML -- see 
-    html.py
+    parsing

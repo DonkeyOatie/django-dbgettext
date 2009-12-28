@@ -3,7 +3,7 @@ from django.core.management.base import NoArgsCommand, CommandError
 from shutil import rmtree
 import os
 from dbgettext.registry import registry
-from dbgettext.html import html_gettext
+from dbgettext.parser import parsed_gettext
 
 def recursive_getattr(obj, attr, default=None, separator='__'):
     """ Allows getattr(obj, 'related_class__property__subproperty__etc') """
@@ -90,6 +90,7 @@ class Command(NoArgsCommand):
         """ Export translatable strings from models into static files """
 
         def write(file, string):
+            print "write", file, string
             string = string.replace('"','\\"') # prevent """"
             string = string.encode('utf8')
             file.write(u'gettext("""%s""")\n' % string)
@@ -115,8 +116,8 @@ class Command(NoArgsCommand):
                         write(f, attr)
                         f.close()
 
-                for attr_name in options.html_attributes:
+                for attr_name in options.parsed_attributes:
                     f = open(os.path.join(path, '%s.py' % attr_name), 'w')
-                    for s in html_gettext(obj, attr_name, export=True):
+                    for s in parsed_gettext(obj, attr_name, export=True):
                         write(f, s)
                     f.close()                    
