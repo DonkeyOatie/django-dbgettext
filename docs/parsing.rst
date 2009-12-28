@@ -59,7 +59,7 @@ The ``custom_lexicon_rules`` :ref:`option <options>` allow the HTML parsing algo
 	    return [self.href, self.content]
 
 	def get_key(self):
-	    return 'link:%s' % self.content
+	    return 'link:%s' % self.content  # should sanitize content first
 
 
     class TextOptions(Options):

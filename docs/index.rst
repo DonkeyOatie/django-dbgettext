@@ -22,4 +22,5 @@ Contents:
    settings
    parsing
    nesting
+   FAQ
 

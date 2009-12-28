@@ -92,7 +92,7 @@ def parsed_gettext(obj, attribute, export=False):
                 format += '%%(%s)s' % t.get_key()
                 params[t.get_key()] = t.get_raw()
             else:
-                format += t.get_raw()
+                format += t.get_raw().replace('%', '%%')
             inner_gettext += t.get_gettext()
         return format, params, remainder, inner_gettext
 
