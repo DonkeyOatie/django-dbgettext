@@ -64,6 +64,7 @@ def lexicon(options):
     ignored = [
         (r'<!--.*?-->', ignore),
         (r'<script.*?/script>', ignore),
+        (r'\r', ignore), # forbidden in gettext, must split on these
     ]
 
     custom = getattr(options, 'custom_lexicon_rules', [])
@@ -84,7 +85,7 @@ def lexicon(options):
     ]
 
     text = [
-        (r'[^<>]*[^\s<>]', text),
+        (r'[^\r<>]*[^\s<>]', text),
     ]
     
     lexicon = ignored + custom + tags + whitespace + text

@@ -19,6 +19,23 @@ Simply create a ``gettext.py`` file within your application root directory, impo
 
 That's it. Your ``gettext.py`` files will be automatically imported by django-dbgettext, and registered models will be included when running :doc:`dbgettext_export <dbgettext_export>`.
 
+.. _project-level:
+
+--------------------------
+Project-level Registration
+--------------------------
+
+To register models from third-party applications, you can specify a module containing dbgettext registration in the ``DBGETTEXT_PROJECT_OPTIONS`` :ref:`setting <settings>`. For example, the following could be stored in ``my_project/dbgettext_options.py`` and ``DBGETTEXT_PROJECT_OPTIONS`` set to ``my_project.dbgettext_options`` to register ``flatpages`` ::
+
+    from dbgettext.registry import registry, Options
+    from dbgettext.lexicons import html
+    from django.contrib.flatpages.models import FlatPage
+
+    class FlatPageOptions(Options):
+	attributes = ('title',)
+	parsed_attributes = {'content': html.lexicon}
+
+    registry.register(FlatPage, FlatPageOptions)
 
 .. _options:
 

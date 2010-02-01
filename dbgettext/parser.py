@@ -19,7 +19,10 @@ class Token(object):
         if self.type == 'text':
             return Token.ALWAYS_TRANSLATE
         elif self.type == 'whitespace':
-            return Token.MAYBE_TRANSLATE
+            if self.raw.find('\r') >= 0: # carriage-returns forbidden
+                return Token.NEVER_TRANSLATE
+            else:
+                return Token.MAYBE_TRANSLATE
         else:
             return Token.NEVER_TRANSLATE
 

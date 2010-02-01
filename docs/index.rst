@@ -22,5 +22,7 @@ Contents:
    settings
    parsing
    nesting
+   templatetags
+   flatpages
    FAQ
 

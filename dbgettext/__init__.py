@@ -5,9 +5,9 @@ LOADING = False
 
 def autodiscover():
     """
-    Auto-discover INSTALLED_APPS dbgettext.py modules and fail silently when
-    not present. This forces an import on them to register any admin bits they
-    may want.
+    Auto-discover INSTALLED_APPS gettext.py modules and fail silently when
+    not present. This forces an import on them to register any dbggettext bits 
+    they may want.
     """
     global LOADING
     if LOADING:
@@ -16,7 +16,6 @@ def autodiscover():
 
     import imp
     from django.conf import settings
-
     for app in settings.INSTALLED_APPS:
         try:
             app_path = import_module(app).__path__
@@ -29,6 +28,10 @@ def autodiscover():
             continue
 
         import_module("%s.gettext" % app)
+    
+    # import project-level options
+    if hasattr(settings, 'DBGETTEXT_PROJECT_OPTIONS'):
+        import_module(settings.DBGETTEXT_PROJECT_OPTIONS)
 
     LOADING = False
 
