@@ -8,6 +8,6 @@ setup(name='django-dbgettext',
       author='Simon Meers',
       author_email='simon@simonmeers.com',
       url='http://bitbucket.org/drmeers/django-dbgettext/wiki',
-      packages=['dbgettext', 'dbgettext.management', 
+      packages=['dbgettext', 'dbgettext.management', 'dbgettext.templatetags',
                 'dbgettext.management.commands', 'dbgettext.lexicons'],
      )
