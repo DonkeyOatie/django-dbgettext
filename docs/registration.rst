@@ -5,7 +5,7 @@ Registering Models
 
 Models can be registered for django-dbgettext in a similar fashion to registering `ModelAdmin classes <http://docs.djangoproject.com/en/dev/ref/contrib/admin/#modeladmin-objects>`_ for ``django.contrib.admin``
 
-Simply create a ``gettext.py`` file within your application root directory, import the dbgettext ``registry`` object, and register your Models together with their customised ``dbgettext.models.Options``. For example::
+Simply create a ``dbgettext_registration.py`` file within your application root directory, import the dbgettext ``registry`` object, and register your Models together with their customised ``dbgettext.models.Options``. For example::
 
     from dbgettext.registry import registry, Options
     from dbgettext.lexicons import html    
@@ -17,7 +17,9 @@ Simply create a ``gettext.py`` file within your application root directory, impo
 	
     registry.register(MyModel, MyModelOptions)
 
-That's it. Your ``gettext.py`` files will be automatically imported by django-dbgettext, and registered models will be included when running :doc:`dbgettext_export <dbgettext_export>`.
+That's it. Your ``dbgettext_registration.py`` files will be automatically imported by django-dbgettext, and registered models will be included when running :doc:`dbgettext_export <dbgettext_export>`.
+
+You can customise the module name using the ``DBGETTEXT_REGISTRATION_MODULE_NAME`` :ref:`setting <settings>`.
 
 .. _project-level:
 

@@ -3,11 +3,15 @@
 from django.utils.importlib import import_module
 LOADING = False
 
+from django.conf import settings
+REGISTRATION_MODULE_NAME = getattr(
+    settings, 'DBGETTEXT_REGISTRATION_MODULE_NAME', 'dbgettext_registration')
+
 def autodiscover():
     """
-    Auto-discover INSTALLED_APPS gettext.py modules and fail silently when
-    not present. This forces an import on them to register any dbggettext bits 
-    they may want.
+    Auto-discover INSTALLED_APPS dbgettext_registration.py modules and fail 
+    silently when not present. This forces an import on them to register any 
+    dbggettext bits they may want.
     """
     global LOADING
     if LOADING:
@@ -15,7 +19,6 @@ def autodiscover():
     LOADING = True
 
     import imp
-    from django.conf import settings
     for app in settings.INSTALLED_APPS:
         try:
             app_path = import_module(app).__path__
@@ -23,11 +26,11 @@ def autodiscover():
             continue
 
         try:
-            imp.find_module('gettext', app_path)
+            imp.find_module(REGISTRATION_MODULE_NAME, app_path)
         except ImportError:
             continue
 
-        import_module("%s.gettext" % app)
+        import_module("%s.%s" % (app, REGISTRATION_MODULE_NAME))
     
     # import project-level options
     if hasattr(settings, 'DBGETTEXT_PROJECT_OPTIONS'):

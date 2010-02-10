@@ -14,7 +14,7 @@ The ``DBGETTEXT_INLINE_HTML_TAGS`` :ref:`setting <settings>` can be used to defi
 
     This <b>string</b> is <i>translatable</i> by <u>default</u>.
 
-The ``custom_lexicon_rules`` :ref:`option <options>` allow the HTML parsing algorithm to be customised to suit your needs. For example, the following ``gettext.py`` file allows images to appear as moveable placeholders in translatable strings::
+The ``custom_lexicon_rules`` :ref:`option <options>` allow the HTML parsing algorithm to be customised to suit your needs. For example, the following ``dbgettext_registration.py`` file allows images to appear as moveable placeholders in translatable strings::
 
     from dbgettext.registry import registry, Options
     from dbgettext.parser import Token
