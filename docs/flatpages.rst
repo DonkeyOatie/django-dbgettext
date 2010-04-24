@@ -11,7 +11,7 @@ Settings
 
 Registration
 ------------
-``my_project/dbgettext_options.py``:
+``my_project/dbgettext_options.py``::
 
     from dbgettext.registry import registry, Options
     from dbgettext.lexicons import html
