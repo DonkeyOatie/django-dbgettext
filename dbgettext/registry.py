@@ -31,7 +31,7 @@ class Options(object):
     parent = None
     
     def get_path_identifier(self, obj):
-        return '%s_%d' % (obj._meta.object_name, obj.id)
+        return '%s_%s' % (obj._meta.object_name, str(obj.pk))
 
 
 # Registration code based on django.contrib.admin.sites
