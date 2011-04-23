@@ -10,7 +10,7 @@ def recursive_getattr(obj, attr, default=None, separator='__'):
     try:
         if attr.find(separator) > 0:
             bits = attr.split(separator)
-            return recursive_getattr(getattr(obj, bits[0]), 
+            return recursive_getattr(getattr(obj, bits[0]),
                                      separator.join(bits[1:]), default)
         else:
             return getattr(obj, attr)
@@ -50,7 +50,7 @@ def build_queryset(model, queryset=None, trail=[]):
     if options.parent:
         parent_model = \
             getattr(model,options.parent).field.related.parent_model
-        queryset = build_queryset(parent_model, queryset, 
+        queryset = build_queryset(parent_model, queryset,
                                   trail+[options.parent])
 
     return queryset
@@ -67,6 +67,11 @@ def build_path(obj):
         path = os.path.join(model._meta.app_label,model._meta.module_name)
     return os.path.join(path, options.get_path_identifier(obj))
 
+def sanitise_message(message):
+    """ Prepare message for storage in .po file. """
+    # carriage returns are forbidden in po files, but seem to be ignored
+    # during lookups, so it should be safe to remove them
+    return message.replace('\r', '')
 
 class Command(NoArgsCommand):
     """ dbgettext_export management command """
@@ -98,25 +103,25 @@ class Command(NoArgsCommand):
 
         # remove any old files
         if os.path.exists(root):
-            rmtree(root) 
+            rmtree(root)
 
         # for each registered model:
         for model, options in registry._registry.items():
             for obj in build_queryset(model):
                 path = os.path.join(root, build_path(obj))
 
-                if not os.path.exists(path): 
+                if not os.path.exists(path):
                     os.makedirs(path)
 
                 for attr_name in options.attributes:
                     attr = get_field_or_callable_content(obj, attr_name)
                     if attr:
                         f = open(os.path.join(path, '%s.py' % attr_name), 'w')
-                        write(f, attr)
+                        write(f, sanitise_message(attr))
                         f.close()
 
                 for attr_name in options.parsed_attributes:
                     f = open(os.path.join(path, '%s.py' % attr_name), 'w')
                     for s in parsed_gettext(obj, attr_name, export=True):
-                        write(f, s)
-                    f.close()                    
+                        write(f, sanitise_message(s))
+                    f.close()
