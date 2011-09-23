@@ -1,9 +1,15 @@
 from django.conf import settings
 from django.core.management.base import NoArgsCommand, CommandError
-from shutil import rmtree
+
 import os
+import re
+from shutil import rmtree
+
 from dbgettext.registry import registry
 from dbgettext.parser import parsed_gettext
+
+INVALID_ESCAPE_SEQUENCES = re.compile(r'[\a\b\f\r\v]')
+# (see xgettext's write-po.c)
 
 def recursive_getattr(obj, attr, default=None, separator='__'):
     """ Allows getattr(obj, 'related_class__property__subproperty__etc') """
@@ -69,9 +75,7 @@ def build_path(obj):
 
 def sanitise_message(message):
     """ Prepare message for storage in .po file. """
-    # carriage returns are forbidden in po files, but seem to be ignored
-    # during lookups, so it should be safe to remove them
-    return message.replace('\r', '')
+    return INVALID_ESCAPE_SEQUENCES.sub('', message)
 
 class Command(NoArgsCommand):
     """ dbgettext_export management command """
