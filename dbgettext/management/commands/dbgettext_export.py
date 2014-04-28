@@ -100,8 +100,9 @@ class Command(NoArgsCommand):
 
         def write(file, string):
             string = string.replace('"','\\"') # prevent """"
+            string = '# -*- coding: utf-8 -*-\ngettext("""%s""")\n' % string
             string = string.encode('utf8')
-            file.write('# -*- coding: utf-8 -*-\ngettext("""%s""")\n' % string)
+            file.write(string)
 
         root = os.path.join(self.path, self.root)
 
@@ -120,12 +121,12 @@ class Command(NoArgsCommand):
                 for attr_name in options.attributes:
                     attr = get_field_or_callable_content(obj, attr_name)
                     if attr:
-                        f = open(os.path.join(path, '%s.py' % attr_name), 'w')
+                        f = open(os.path.join(path, '%s.py' % attr_name), 'wb')
                         write(f, sanitise_message(attr))
                         f.close()
 
                 for attr_name in options.parsed_attributes:
-                    f = open(os.path.join(path, '%s.py' % attr_name), 'w')
+                    f = open(os.path.join(path, '%s.py' % attr_name), 'wb')
                     for s in parsed_gettext(obj, attr_name, export=True):
                         write(f, sanitise_message(s))
                     f.close()

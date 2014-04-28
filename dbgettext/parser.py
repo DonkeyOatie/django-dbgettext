@@ -1,5 +1,5 @@
 from django.conf import settings
-from registry import registry
+from .registry import registry
 import re
 
 SENTENCE_RE = getattr(settings, 'DBGETTEXT_SENTENCE_RE', re.compile(r'^(.*?\S[\!\?\.])(\s+)(\S+.*)$', re.DOTALL))
