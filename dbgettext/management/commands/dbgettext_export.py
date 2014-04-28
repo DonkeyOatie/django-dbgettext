@@ -101,8 +101,7 @@ class Command(NoArgsCommand):
         def write(file, string):
             string = string.replace('"','\\"') # prevent """"
             string = '# -*- coding: utf-8 -*-\ngettext("""%s""")\n' % string
-            string = string.encode('utf8')
-            file.write(string)
+            file.write(string.encode('utf8'))
 
         root = os.path.join(self.path, self.root)
 
