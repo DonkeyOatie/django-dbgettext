@@ -6,3 +6,4 @@ MANIFEST
 _build
 _static
 _templates
+.idea

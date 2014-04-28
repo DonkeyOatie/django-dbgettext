@@ -43,7 +43,7 @@ def build_queryset(model, queryset=None, trail=[]):
     try:
         options = registry._registry[model]
     except:
-        raise Exception, "%s is not registered with dbgettext" % model
+        raise Exception("%s is not registered with dbgettext" % model)
 
     if queryset is None:
         queryset = model.objects.all()

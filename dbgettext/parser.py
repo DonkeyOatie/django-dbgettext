@@ -64,7 +64,7 @@ def parsed_gettext(obj, attribute, export=False):
     try:
         lexicon = options.parsed_attributes[attribute]
     except:
-        raise Exception, "Invalid lexicon configuration in parsed_attributes"
+        raise Exception("Invalid lexicon configuration in parsed_attributes")
 
     from django.utils.translation import ugettext as _
     # lazy / string_concat don't seem to work how I want...
@@ -133,7 +133,7 @@ def parsed_gettext(obj, attribute, export=False):
 
     if export:
         if remainder:
-            raise Exception, 'scanner got stuck on: "%s"(...)' % remainder[:10]
+            raise Exception('scanner got stuck on: "%s"(...)' % remainder[:10])
         return gettext
     else:
         return ''.join(output)
