@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='django-dbgettext',
-      version='0.1',
+      version='0.1.1',
       description='Translate Django models by extracting data for gettext',
       author='Simon Meers',
       author_email='simon@simonmeers.com',
