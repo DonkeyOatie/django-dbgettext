@@ -1,6 +1,6 @@
 # based on django.contrib.admin.__init__.py
 
-from django.utils.importlib import import_module
+from importlib import import_module
 LOADING = False
 
 from django.conf import settings
