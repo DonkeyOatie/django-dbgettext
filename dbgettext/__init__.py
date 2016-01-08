@@ -1,6 +1,10 @@
 # based on django.contrib.admin.__init__.py
 
-from importlib import import_module
+try:
+    from importlib import import_module
+except ImportError:
+    # backward compatibility for Python 2.6-
+    from django.utils.importlib import import_module
 LOADING = False
 
 from django.conf import settings
