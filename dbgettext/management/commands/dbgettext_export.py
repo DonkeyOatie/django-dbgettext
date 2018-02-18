@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.core.management.base import NoArgsCommand, CommandError
+from django.core.management.base import BaseCommand, CommandError
 
 import os
 import re
@@ -54,8 +54,12 @@ def build_queryset(model, queryset=None, trail=[]):
     queryset = queryset.filter(**recursive_criteria)
 
     if options.parent:
-        parent_model = \
-            getattr(model,options.parent).field.related.parent_model
+        try:
+            parent_model = \
+                getattr(model,options.parent).field.related.parent_model
+        except AttributeError:
+            parent_model = \
+                getattr(model,options.parent).field.related.model
         queryset = build_queryset(parent_model, queryset,
                                   trail+[options.parent])
 
@@ -70,21 +74,22 @@ def build_path(obj):
     if options.parent:
         path = build_path(getattr(obj, options.parent))
     else:
-        path = os.path.join(model._meta.app_label,model._meta.module_name)
+        #path = os.path.join(model._meta.app_label,model._meta.module_name)
+        path = os.path.join(model._meta.app_label,model._meta.model_name)
     return os.path.join(path, options.get_path_identifier(obj))
 
 def sanitise_message(message):
     """ Prepare message for storage in .po file. """
     return INVALID_ESCAPE_SEQUENCES.sub('', message)
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
     """ dbgettext_export management command """
 
     # overridable path settings (default: project_root/locale/dbgettext/...)
     path = getattr(settings, 'DBGETTEXT_PATH', 'locale/')
     root = getattr(settings, 'DBGETTEXT_ROOT', 'dbgettext')
 
-    def handle_noargs(self, **options):
+    def handle(self, *args, **options):
         if not os.path.exists(self.path):
             raise CommandError('This command must be run from the project '
                                'root directory, and the %s '
